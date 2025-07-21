@@ -33,8 +33,8 @@ const HomePage: React.FC<HomePageProps> = ({ viewportHeight, topNavHeight, heade
   };
 
   const heroSectionMinHeight = calculateHeroHeight();
-  // CRITICAL FIX: Increased bottom value to move the arrow further down visually
-  const scrollDownButtonBottom = '30px'; // Adjusted from 0px to 30px. You can fine-tune this value.
+  // CRITICAL FIX: Adjusted bottom value to move the arrow further down
+  const scrollDownButtonBottom = '-150px'; // Adjusted from 30px to 10px. You can fine-tune this value.
 
   return (
     <motion.div
