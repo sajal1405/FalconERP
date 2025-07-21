@@ -41,8 +41,7 @@ function AppContent({ Component, pageProps }: AppProps) {
   const measureHeights = useCallback(() => {
     if (typeof window !== 'undefined') {
       setViewportHeight(window.innerHeight);
-      // CRITICAL FIX: Measure the height of the *top* header container
-      const currentHeaderContainerHeight = headerRef.current?.offsetHeight || 80; // Default to a reasonable height for the top bar
+      const currentHeaderContainerHeight = headerRef.current?.offsetHeight || 80;
       setIsMobile(window.innerWidth < 768);
       setHeaderHeight(currentHeaderContainerHeight);
     }
@@ -97,8 +96,7 @@ function AppContent({ Component, pageProps }: AppProps) {
   const fabSize = 60;
   const fabSpacing = 16;
   const chatbotFabBottomBaseOffset = fabSpacing;
-  // dynamicPaddingBottom is now handled by DefaultLayout's internal padding calculation
-  const dynamicPaddingBottom = '0px'; // Set to 0px as DefaultLayout will manage it
+  const dynamicPaddingBottom = '0px';
 
   return (
     <>
@@ -133,11 +131,18 @@ function AppContent({ Component, pageProps }: AppProps) {
           )}
           {currentLayoutType === 'default' && (
             <DefaultLayout
-              headerRef={headerRef} // Pass the ref to the overall TOP header container
-              headerHeight={headerHeight} // Pass the calculated height of the TOP header container
+              headerRef={headerRef}
+              headerHeight={headerHeight}
               dynamicPaddingBottom={dynamicPaddingBottom}
               activePage={activePageForHeader}
-              setActivePage={(page) => router.push(`/${page}`)}
+              // CRITICAL FIX: Handle 'home' page navigation to '/'
+              setActivePage={(page) => {
+                if (page === 'home') {
+                  router.push('/');
+                } else {
+                  router.push(`/${page}`);
+                }
+              }}
               isMobile={isMobile}
               chatbotFabBottomBaseOffset={chatbotFabBottomBaseOffset}
               fabSize={fabSize}
