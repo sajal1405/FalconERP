@@ -1,9 +1,9 @@
 // src/components/header/Header.tsx
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Info, Briefcase, HelpCircle, Mail } from 'lucide-react'; // Lucide icons for nav items
-
+import { motion } from 'framer-motion'; // AnimatePresence is used by NavItem's text, but not directly in Header
+// No Image or Link imports here, as they are used in DefaultLayout.tsx
 import NavItem from './NavItem';
+import { Home, Info, Briefcase, HelpCircle, Mail } from 'lucide-react'; // Lucide icons for nav items
 
 interface HeaderProps {
   activePage: string;
@@ -31,6 +31,7 @@ const Header: React.FC<HeaderProps> = ({ activePage, setActivePage }) => {
       animate={{ scale: 1, opacity: 1 }}
       transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.8 }}
     >
+      {/* Logo and Get in Touch button are now handled in DefaultLayout.tsx */}
       <div className="relative flex items-center justify-around w-full">
         {navItems.map((item) => (
           <NavItem

@@ -1,5 +1,5 @@
 // src/layouts/DefaultLayout.tsx
-import React, { useRef } from 'react';
+import React from 'react'; // Removed useRef
 import Header from '../components/header/Header'; // The navigation pill component
 import ScrollToTopFab from '../components/common/ScrollToTopFab';
 import ChatbotFab from '../components/common/ChatbotFab';
