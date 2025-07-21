@@ -1,83 +1,127 @@
 // src/layouts/AdminLayout.tsx
 import React, { ReactNode } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { useRouter } from 'next/router';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useAuth } from '../hooks/useAuth'; // Use the custom auth hook
-import { signOut } from 'next-auth/react'; // For logout functionality
-import { Home, Users, BookOpen, Settings, LogOut, BarChart2 } from 'lucide-react'; // Example icons
+import Image from 'next/image';
+import {
+  Home, Users, Settings, BarChart2, BookOpen, FileText, Package, ShoppingCart,
+  DollarSign, ClipboardList, Factory, Wallet, LineChart, LogOut, ChevronRight
+} from 'lucide-react';
 
 interface AdminLayoutProps {
   children: ReactNode;
 }
 
-/**
- * AdminLayout Component
- * Provides the layout for the administrative portal.
- * Includes a sidebar for navigation and a top bar with user information and logout.
- * Designed for roles like 'admin', 'superadmin', 'editor', 'tech'.
- */
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
-  // Prefix unused variables with underscore to satisfy ESLint's no-unused-vars rule
   const { user, isAdmin: _isAdmin, isSuperAdmin: _isSuperAdmin, isEditor: _isEditor, isTech: _isTech } = useAuth(); // Get user and role info
+  const router = useRouter();
 
   // Admin navigation items, conditionally rendered based on user roles
   const navItems = [
-    { name: 'Dashboard', href: '/admin', icon: Home, roles: ['admin', 'superadmin', 'editor', 'tech'] },
-    { name: 'User Management', href: '/admin/users', icon: Users, roles: ['superadmin'] },
-    { name: 'Content Management', href: '/admin/content', icon: BookOpen, roles: ['admin', 'superadmin', 'editor'] },
-    { name: 'Reports', href: '/admin/reports', icon: BarChart2, roles: ['admin', 'superadmin', 'tech'] },
-    { name: 'Settings', href: '/admin/settings', icon: Settings, roles: ['superadmin'] },
+    { name: 'Dashboard', icon: Home, path: '/admin/dashboard', roles: ['superadmin', 'editor', 'tech'] },
+    { name: 'User Management', icon: Users, path: '/admin/users', roles: ['superadmin'] },
+    { name: 'Settings', icon: Settings, path: '/admin/settings', roles: ['superadmin', 'tech'] },
+    { name: 'Analytics', icon: BarChart2, path: '/admin/analytics', roles: ['superadmin', 'editor'] },
+    { name: 'FAQs Management', icon: BookOpen, path: '/admin/faqs', roles: ['superadmin', 'editor'] },
+    { name: 'Reports', icon: FileText, path: '/admin/reports', roles: ['superadmin', 'editor', 'tech'] },
+    // Module-specific navigation (example, adjust as per your actual modules)
+    { name: 'Finance', icon: DollarSign, path: '/admin/finance', roles: ['superadmin', 'editor'] },
+    { name: 'Inventory', icon: Package, path: '/admin/inventory', roles: ['superadmin', 'tech'] },
+    { name: 'Purchases', icon: ShoppingCart, path: '/admin/purchases', roles: ['superadmin', 'editor'] },
+    { name: 'Sales', icon: LineChart, path: '/admin/sales', roles: ['superadmin', 'editor'] },
+    { name: 'Cheques', icon: ClipboardList, path: '/admin/cheques', roles: ['superadmin', 'editor'] },
+    { name: 'Manufacturing', icon: Factory, path: '/admin/manufacturing', roles: ['superadmin', 'tech'] },
+    { name: 'Prepaid', icon: Wallet, path: '/admin/prepaid', roles: ['superadmin', 'editor'] },
   ];
 
-  // Function to check if the user has access to a given role
-  const hasAccess = (requiredRoles: string[]) => {
-    if (!user) return false;
-    return requiredRoles.includes(user.role);
-  };
+  // Filter navigation items based on the user's role
+  const filteredNavItems = navItems.filter(item => {
+    if (!user || !user.role) return false; // No user or role, no access
+
+    // Check if user's role is included in the item's allowed roles
+    return item.roles.includes(user.role);
+  });
+
+  // Redirect if user is not authenticated or not an admin
+  // This check is already done in _app.tsx, but can be a fallback
+  if (!user || !user.isAdmin) {
+    // router.push('/auth/login'); // This redirection logic is handled by _app.tsx
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-950 text-white">
+        <p>Access Denied. Please log in with appropriate credentials.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-200 flex flex-col lg:flex-row">
-      {/* Admin Sidebar */}
-      <aside className="w-full lg:w-64 bg-gray-800 p-4 shadow-lg flex-shrink-0">
-        <div className="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-          <h2 className="text-2xl font-bold text-white">Admin Panel</h2>
-          {/* Optional: Mobile sidebar toggle button */}
+    <div className="flex min-h-screen bg-gray-900 text-gray-100">
+      {/* Sidebar Navigation */}
+      <motion.aside
+        className="w-64 bg-gray-950 p-6 flex flex-col shadow-lg border-r border-gray-800"
+        initial={{ x: -200 }}
+        animate={{ x: 0 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+      >
+        {/* Logo */}
+        <div className="mb-8 flex justify-center">
+          <Link href="/admin/dashboard" passHref>
+            <div className="relative w-36 h-10">
+              <Image src="/images/WLogo.svg" alt="Admin Logo" fill className="object-contain" />
+            </div>
+          </Link>
         </div>
-        <nav className="space-y-2">
-          {navItems.map((item) => (
-            hasAccess(item.roles) && (
-              <Link key={item.name} href={item.href} className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                <item.icon size={20} className="text-blue-400" />
+
+        {/* User Info */}
+        {user && (
+          <div className="text-center mb-8 pb-4 border-b border-gray-700">
+            <p className="font-semibold text-lg">{user.name || 'Admin User'}</p>
+            <p className="text-sm text-gray-400 capitalize">{user.role}</p>
+          </div>
+        )}
+
+        {/* Navigation Links */}
+        <nav className="flex-grow space-y-2">
+          {filteredNavItems.map((item) => (
+            <Link key={item.name} href={item.path} passHref>
+              <motion.a
+                className={`flex items-center p-3 rounded-lg transition-colors duration-200
+                  ${router.pathname.startsWith(item.path) ? 'bg-blue-700 text-white shadow-md' : 'hover:bg-gray-800 text-gray-300'}
+                `}
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <item.icon size={20} className="mr-3" />
                 <span className="font-medium">{item.name}</span>
-              </Link>
-            )
+                {router.pathname.startsWith(item.path) && (
+                  <ChevronRight size={18} className="ml-auto text-white" />
+                )}
+              </motion.a>
+            </Link>
           ))}
         </nav>
-      </aside>
+
+        {/* Logout Button */}
+        <div className="mt-8">
+          <Link href="/api/auth/signout" passHref>
+            <motion.a
+              className="flex items-center p-3 rounded-lg bg-red-600 text-white w-full justify-center
+                hover:bg-red-700 transition-colors duration-200 shadow-md"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <LogOut size={20} className="mr-2" />
+              Logout
+            </motion.a>
+          </Link>
+        </div>
+      </motion.aside>
 
       {/* Main Content Area */}
-      <div className="flex-grow flex flex-col">
-        {/* Admin Top Bar / Header */}
-        <header className="bg-gray-800 p-4 shadow-md flex justify-between items-center flex-shrink-0">
-          <h1 className="text-xl font-bold text-white">
-            {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Guest'} Dashboard
-          </h1>
-          <div className="flex items-center gap-4">
-            <span className="text-gray-400 text-sm">Welcome, {user?.name || user?.email || 'Admin'}</span>
-            <button
-              onClick={() => signOut({ callbackUrl: '/auth/login' })} // Redirect to login after logout
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200"
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
-          </div>
-        </header>
-
-        {/* Page Content */}
-        <main className="flex-grow p-6 overflow-auto">
-          {children}
-        </main>
-      </div>
+      <main className="flex-grow p-8 overflow-y-auto">
+        {children}
+      </main>
     </div>
   );
 };
