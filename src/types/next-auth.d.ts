@@ -1,6 +1,6 @@
 // src/types/next-auth.d.ts
-import { DefaultSession, DefaultUser } from "next-auth"; // Removed NextAuth
-// Removed: import { JWT } from "next-auth/jwt"; // JWT import is not strictly needed here for declaration merging
+import { DefaultSession, DefaultUser } from "next-auth";
+import { JWT } from "next-auth/jwt"; // Keep this import as it's used by declare module "next-auth/jwt"
 
 // Extend the built-in session and user types to include custom properties
 declare module "next-auth" {
@@ -12,6 +12,7 @@ declare module "next-auth" {
       id?: string; // Add user ID if you store it
       isAdmin?: boolean; // Custom property for admin role
       isClient?: boolean; // Custom property for client role
+      role?: string; // CRITICAL FIX: Add role property
       // Add any other custom properties you want to expose on the session user object
     } & DefaultSession["user"];
   }
@@ -23,6 +24,7 @@ declare module "next-auth" {
     id?: string; // Add user ID
     isAdmin?: boolean; // Custom property for admin role
     isClient?: boolean; // Custom property for client role
+    role?: string; // CRITICAL FIX: Add role property
     // Add any other custom properties you want to store on the user object
   }
 }
@@ -35,6 +37,7 @@ declare module "next-auth/jwt" {
     id?: string; // Add user ID to JWT
     isAdmin?: boolean; // Custom property for admin role in JWT
     isClient?: boolean; // Custom property for client role in JWT
+    role?: string; // CRITICAL FIX: Add role property to JWT
     // Add any other custom properties you want to store in the JWT
   }
 }

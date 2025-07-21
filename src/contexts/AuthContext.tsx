@@ -1,82 +1,73 @@
 // src/contexts/AuthContext.tsx
-import React, { createContext, useContext, useMemo, ReactNode } from 'react';
-import { useSession } from 'next-auth/react'; // Integrate with NextAuth.js
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
-// Define the shape of the user object (extend as needed with your Prisma User model)
-export interface AppUser { // Exported for use in other types/components
-  id: string;
-  email: string;
+// Define the shape of the user object within our application context
+// This should align with the extended NextAuth.js User/Session types
+interface AppUser {
+  id?: string;
   name?: string | null;
+  email?: string | null;
   image?: string | null;
-  role: 'guest' | 'client' | 'admin' | 'superadmin' | 'editor' | 'tech'; // Define your roles
+  role: 'admin' | 'client' | 'guest' | string; // CRITICAL: Define role property
+  isAdmin: boolean;
+  isClient: boolean;
 }
 
-// Define the shape of the AuthContext value
+// Define the shape of the authentication context
 interface AuthContextType {
   user: AppUser | null;
   isAuthenticated: boolean;
-  isGuest: boolean;
+  status: 'loading' | 'authenticated' | 'unauthenticated';
+  isAdmin: boolean;
   isClient: boolean;
-  isAdmin: boolean; // Includes 'admin' and 'superadmin'
-  isSuperAdmin: boolean;
-  isEditor: boolean;
-  isTech: boolean;
-  status: 'loading' | 'authenticated' | 'unauthenticated'; // NextAuth.js session status
+  // Add any other auth-related functions or data here
 }
 
-// Create the AuthContext with an initial undefined value
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Create the context with a default null value
+const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-/**
- * AuthProvider Component
- * Provides authentication state and user roles to the entire application.
- * It consumes the NextAuth.js session and derives derived authentication states.
- */
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const { data: session, status } = useSession(); // Get session data and status from NextAuth.js
+  const { data: session, status } = useSession();
+  const [user, setUser] = useState<AppUser | null>(null);
+  const router = useRouter();
 
-  // Derive user roles and authentication status from the session
-  const user: AppUser | null = useMemo(() => {
+  useEffect(() => {
     if (status === 'authenticated' && session?.user) {
-      // Ensure the user object from session matches AppUser structure
-      // IMPORTANT: Ensure your NextAuth.js callbacks add 'id' and 'role' to session.user
-      return {
-        id: session.user.id as string,
-        email: session.user.email as string,
+      // Map NextAuth.js session user to our AppUser type
+      const appUser: AppUser = {
+        id: session.user.id,
         name: session.user.name,
+        email: session.user.email,
         image: session.user.image,
-        role: (session.user.role || 'guest') as AppUser['role'], // Default to 'guest' if role is not set
+        // Ensure role is explicitly set, defaulting to 'guest' if not provided by session
+        role: (session.user.role || 'guest') as AppUser['role'], // Cast to ensure type safety
+        isAdmin: session.user.isAdmin || false,
+        isClient: session.user.isClient || false,
       };
+      setUser(appUser);
+    } else if (status === 'unauthenticated') {
+      setUser(null);
     }
-    return null;
   }, [session, status]);
 
+  // Derive boolean flags for roles
   const isAuthenticated = status === 'authenticated';
-  const userRole = user?.role || 'guest';
+  const isAdmin = user?.isAdmin || false;
+  const isClient = user?.isClient || false;
 
-  const isGuest = !isAuthenticated;
-  const isClient = userRole === 'client';
-  const isAdmin = userRole === 'admin' || userRole === 'superadmin';
-  const isSuperAdmin = userRole === 'superadmin';
-  const isEditor = userRole === 'editor';
-  const isTech = userRole === 'tech';
-
-  // Memoize the context value to prevent unnecessary re-renders
-  const contextValue = useMemo(() => ({
+  const contextValue: AuthContextType = {
     user,
     isAuthenticated,
-    isGuest,
-    isClient,
-    isAdmin,
-    isSuperAdmin,
-    isEditor,
-    isTech,
     status,
-  }), [user, isAuthenticated, isGuest, isClient, isAdmin, isSuperAdmin, isEditor, isTech, status]);
+    isAdmin,
+    isClient,
+  };
 
   return (
     <AuthContext.Provider value={contextValue}>
@@ -85,13 +76,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 };
 
-/**
- * Custom hook to consume the AuthContext.
- * Throws an error if used outside of an AuthProvider.
- */
+// Custom hook to consume the AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
