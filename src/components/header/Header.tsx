@@ -1,6 +1,6 @@
 // src/components/header/Header.tsx
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion'; // Removed useScroll, useSpring
+import { motion } from 'framer-motion'; // Removed AnimatePresence
 import Image from 'next/image';
 import Link from 'next/link';
 import NavItem from './NavItem';

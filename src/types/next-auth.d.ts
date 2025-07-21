@@ -1,6 +1,6 @@
 // src/types/next-auth.d.ts
-import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
-import { JWT } from "next-auth/jwt";
+import { DefaultSession, DefaultUser } from "next-auth"; // Removed NextAuth
+// Removed: import { JWT } from "next-auth/jwt"; // JWT import is not strictly needed here for declaration merging
 
 // Extend the built-in session and user types to include custom properties
 declare module "next-auth" {
