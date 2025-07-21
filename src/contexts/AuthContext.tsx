@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { useSession } from 'next-auth/react';
 
 // Define the shape of the user object within our application context
-// CRITICAL FIX: Add 'export' keyword here
+// CRITICAL FIX: Ensure 'export' keyword is present here
 export interface AppUser {
   id?: string;
   name?: string | null;
@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         image: session.user.image,
         role: userRole,
         isAdmin: session.user.isAdmin || false,
-        isClient: session.user.isClient || false,
+        isClient: session.user.isAdmin || userRole === 'admin' || userRole === 'superadmin', // Ensure isAdmin is derived from session or role
         isSuperAdmin: session.user.isSuperAdmin || userRole === 'superadmin',
         isEditor: session.user.isEditor || userRole === 'editor',
         isTech: session.user.isTech || userRole === 'tech',
@@ -64,7 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const isAuthenticated = status === 'authenticated';
   const isAdmin = user?.isAdmin || false;
-  const isClient = user?.isClient || false;
+  const isClient = user?.isClient || false; // This should be derived from the user object
   const isSuperAdmin = user?.isSuperAdmin || false;
   const isEditor = user?.isEditor || false;
   const isTech = user?.isTech || false;
@@ -87,7 +87,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 };
 
-// Custom hook to consume the AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

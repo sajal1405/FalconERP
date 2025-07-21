@@ -1,106 +1,125 @@
 // src/pages/api/auth/[...nextauth].ts
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-// import { PrismaAdapter } from "@next-auth/prisma-adapter"; // Uncomment if using Prisma with NextAuth
-// import prisma from "../../../lib/db"; // Your Prisma client instance (ensure this path is correct)
 import { AppUser } from '../../../contexts/AuthContext'; // Import AppUser interface for type safety
 
+// import { PrismaAdapter } from "@next-auth/prisma-adapter"; // Uncomment if using Prisma with NextAuth
+// import prisma from "../../../lib/db"; // Your Prisma client instance (ensure this path is correct)
+
 export default NextAuth({
-  // Configure one or more authentication providers
-  providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text", placeholder: "jsmith@example.com" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials, _req) { // _req is unused, so prefixed
-        // Add your actual authentication logic here.
-        // This is where you would typically query your database (e.g., using Prisma)
-        // to verify the user's credentials.
+    // Configure one or more authentication providers
+    providers: [
+        CredentialsProvider({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "text", placeholder: "jsmith@example.com" },
+                password: { label: "Password", type: "password" }
+            },
+            async authorize(credentials, _req) {
+                // CRITICAL FIX: Restructured authorize logic for correct type narrowing and flow
 
-        // Example with Prisma:
-        // const user = await prisma.user.findUnique({
-        //   where: { email: credentials.email },
-        // });
-        // if (user && await verifyPassword(credentials.password, user.hashedPassword)) {
-        //   return { id: user.id, email: user.email, name: user.name, role: user.role };
-        // } else {
-        //   return null; // Return null if user not found or password doesn't match
-        // }
+                // 1. Check for Admin User
+                if (credentials?.email === "admin@example.com" && credentials?.password === "adminpass") {
+                    const user: AppUser = {
+                        id: "admin_123",
+                        name: "Admin User",
+                        email: "admin@example.com",
+                        role: "superadmin", // Assign 'superadmin' role
+                        image: "https://placehold.co/40x40/000000/FFFFFF?text=AD",
+                        isAdmin: true,
+                        isClient: false,
+                        isSuperAdmin: true,
+                        isEditor: false,
+                        isTech: false,
+                    };
+                    return user;
+                }
+                // 2. Check for Client User
+                else if (credentials?.email === "client@example.com" && credentials?.password === "clientpass") {
+                    const user: AppUser = {
+                        id: "client_123",
+                        name: "Client User",
+                        email: "client@example.com",
+                        role: "client", // Assign 'client' role
+                        image: "https://placehold.co/40x40/000000/FFFFFF?text=CL",
+                        isAdmin: false,
+                        isClient: true,
+                        isSuperAdmin: false,
+                        isEditor: false,
+                        isTech: false,
+                    };
+                    return user;
+                }
+                // 3. Check for Test User (Guest)
+                else if (credentials?.email === "test@example.com" && credentials?.password === "password") {
+                    const user: AppUser = {
+                        id: "user_12345",
+                        name: "Test User",
+                        email: "test@example.com",
+                        role: "guest", // Default role for this test user
+                        image: "https://placehold.co/40x40/000000/FFFFFF?text=TU",
+                        isAdmin: false,
+                        isClient: false,
+                        isSuperAdmin: false,
+                        isEditor: false,
+                        isTech: false,
+                    };
+                    return user;
+                }
+                // 4. No match found
+                else {
+                    // If you return null then an error will be displayed advising the user they could not be signed in.
+                    return null;
+                }
+            }
+        })
+        // Add other providers here if needed (e.g., GoogleProvider, GitHubProvider)
+    ],
+    // Optional: Add a database adapter if you want to persist sessions
+    // adapter: PrismaAdapter(prisma), // Uncomment and configure if using Prisma
 
-        // --- MOCK AUTHENTICATION LOGIC FOR DEMONSTRATION ---
-        // Replace this with your actual user validation
-        if (credentials?.email === "test@example.com" && credentials?.password === "password") {
-          // Return a user object that will be saved in the JWT and session
-          // IMPORTANT: Ensure 'id' and 'role' are included here, as they are used in AuthContext
-          const user: AppUser = { // Explicitly type the user object
-            id: "user_12345", // Unique user ID
-            name: "Test User",
-            email: "test@example.com",
-            role: "admin", // Assign a role for testing (e.g., 'admin', 'client', 'guest')
-            image: "https://placehold.co/40x40/00174F/FFFFFF?text=TU" // Mock user image
-          };
-          return user;
-        }
-        // If you return null, the user will be prompted to log in again.
-        return null;
-      }
-    })
-    // Add other providers here (e.g., GoogleProvider, GitHubProvider)
-    // GoogleProvider({
-    //   clientId: process.env.GOOGLE_CLIENT_ID!,
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET!
-    // })
-  ],
-
-  // Optional: Add a database adapter if you want to persist user sessions in a database
-  // adapter: PrismaAdapter(prisma), // Uncomment if using Prisma adapter
-
-  // Callbacks are used to control what happens when a JWT is created, updated, or a session is accessed.
-  callbacks: {
-    // The `jwt` callback is called whenever a JSON Web Token is created or updated.
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async jwt({ token, user, account, profile }) { // Corrected: use actual parameter names and disable ESLint
-      // `user` is present on first sign in
-      if (user) {
-        token.id = user.id;
-        // Directly assign role from user, which is already typed as AppUser
-        token.role = (user as AppUser).role; // Cast to AppUser to access custom 'role' property
-      }
-      // `account` and `profile` are available here but not used in this mock.
-      // The eslint-disable-next-line comment above handles the unused variable warning.
-      return token;
+    session: {
+        strategy: "jwt",
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+        updateAge: 24 * 60 * 60, // 24 hours
     },
-    // The `session` callback is called whenever a session is checked.
-    async session({ session, token }) {
-      // Add custom properties to the session object
-      if (token) {
-        session.user.id = token.id as string;
-        // Ensure the role type matches the union type defined in AppUser
-        session.user.role = token.role as AppUser['role'];
-      }
-      return session;
-    }
-  },
 
-  // Custom pages for authentication flow
-  pages: {
-    signIn: '/auth/login', // Specify your custom login page
-    // signOut: '/auth/logout', // Optional: custom logout page
-    // error: '/auth/error', // Optional: custom error page
-    // newUser: '/auth/register', // Optional: custom new user registration page
-  },
+    callbacks: {
+        async jwt({ token, user, account: _account }) {
+            // Persist the user ID and role from the user object to the JWT token
+            if (user) {
+                token.id = user.id;
+                token.role = user.role;
+                token.isAdmin = user.isAdmin;
+                token.isClient = user.isClient;
+                token.isSuperAdmin = user.isSuperAdmin;
+                token.isEditor = user.isEditor;
+                token.isTech = user.isTech;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            // Send properties to the client, such as user ID and role from the JWT
+            if (session.user) {
+                session.user.id = token.id;
+                session.user.role = token.role;
+                session.user.isAdmin = token.isAdmin;
+                session.user.isClient = token.isClient;
+                session.user.isSuperAdmin = token.isSuperAdmin;
+                session.user.isEditor = token.isEditor;
+                session.user.isTech = token.isTech;
+            }
+            return session;
+        },
+    },
 
-  // Session configuration
-  session: {
-    strategy: "jwt", // Use JWT for session management
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
+    pages: {
+        signIn: '/auth/login', // Custom sign-in page
+        // error: '/auth/error', // Custom error page
+        // signOut: '/auth/signout', // Custom sign-out page
+    },
 
-  // Secret for NextAuth.js (generate a strong one for production)
-  secret: process.env.NEXTAUTH_SECRET,
-
-  // Debug mode for development
-  debug: process.env.NODE_ENV === 'development',
+    // A secret string used to sign and encrypt the session cookie.
+    // This should be a long, random string.
+    secret: process.env.NEXTAUTH_SECRET,
 });
