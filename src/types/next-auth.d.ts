@@ -1,31 +1,40 @@
 // src/types/next-auth.d.ts
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import NextAuth, { DefaultSession } from "next-auth";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
 import { JWT } from "next-auth/jwt";
-import { AppUser } from '../contexts/AuthContext'; // Import AppUser interface
 
+// Extend the built-in session and user types to include custom properties
 declare module "next-auth" {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface Session {
-    user: AppUser & DefaultSession["user"]; // Merge DefaultSession user with your AppUser
+  interface Session extends DefaultSession {
+    user: {
+      id?: string; // Add user ID if you store it
+      isAdmin?: boolean; // Custom property for admin role
+      isClient?: boolean; // Custom property for client role
+      // Add any other custom properties you want to expose on the session user object
+    } & DefaultSession["user"];
   }
 
   /**
-   * The shape of the user object that is returned from the `authorize` callback
-   * in `CredentialsProvider` or from other providers.
+   * The shape of the user object that is returned from a provider and saved to the session.
    */
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface User extends AppUser {} // Extend the default NextAuth User with your AppUser properties
+  interface User extends DefaultUser {
+    id?: string; // Add user ID
+    isAdmin?: boolean; // Custom property for admin role
+    isClient?: boolean; // Custom property for client role
+    // Add any other custom properties you want to store on the user object
+  }
 }
 
 declare module "next-auth/jwt" {
   /**
-   * Returned by the `jwt` callback and `getToken`, when using JWT sessions
+   * The shape of the JWT token.
    */
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface JWT extends AppUser {} // Extend the default JWT with your AppUser properties
+  interface JWT {
+    id?: string; // Add user ID to JWT
+    isAdmin?: boolean; // Custom property for admin role in JWT
+    isClient?: boolean; // Custom property for client role in JWT
+    // Add any other custom properties you want to store in the JWT
+  }
 }

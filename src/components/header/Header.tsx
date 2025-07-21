@@ -1,13 +1,16 @@
 // src/components/header/Header.tsx
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Info, Briefcase, HelpCircle, Mail } from 'lucide-react'; // Lucide icons for nav items
-
+import React from 'react'; // Removed useRef, useEffect, useState as they are not used directly here
+import { motion, useScroll, useSpring } from 'framer-motion'; // Removed AnimatePresence
+import Image from 'next/image';
+import Link from 'next/link';
 import NavItem from './NavItem';
+import { Home, Info, Briefcase, HelpCircle, Mail } from 'lucide-react';
 
 interface HeaderProps {
   activePage: string;
   setActivePage: (page: string) => void;
+  // Removed isMobile, viewportHeight, headerHeight, dynamicPaddingBottom
+  // as this Header component is designed to be positioned by DefaultLayout
 }
 
 // Header Component - This now represents ONLY the central pill-shaped navigation
@@ -31,6 +34,20 @@ const Header: React.FC<HeaderProps> = ({ activePage, setActivePage }) => {
       animate={{ scale: 1, opacity: 1 }}
       transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.8 }} // Slight delay after main header container appears
     >
+      {/* Logo on the left side of the pill - Ensure parent div is 'relative' */}
+      <Link href="/" passHref>
+        <div className="relative w-24 h-6 md:w-28 md:h-7 flex-shrink-0"> {/* Added relative and flex-shrink-0 */}
+          <Image
+            src="/images/WLogo.svg" // Your white logo
+            alt="Falcon ERP Logo"
+            fill
+            priority
+            sizes="112px"
+            className="object-contain"
+          />
+        </div>
+      </Link>
+
       <div className="relative flex items-center justify-around w-full">
         {navItems.map((item) => (
           <NavItem

@@ -4,27 +4,26 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp } from 'lucide-react'; // Arrow up icon
 
 interface ScrollToTopFabProps {
-  chatFabBottomOffset: number; // Bottom offset of the Chatbot FAB
-  fabSize: number; // Size of a single FAB (width/height)
-  fabSpacing: number; // Spacing between FABs
+  bottomOffset: number; // Now represents its own base bottom offset
+  _fabSize: number; // Renamed to _fabSize to mark as intentionally unused
+  _fabSpacing: number; // Renamed to _fabSpacing to mark as intentionally unused
   headerHeight: number; // Height of the main header (for mobile adjustment)
   isMobile: boolean; // Flag for mobile view
 }
 
 const ScrollToTopFab: React.FC<ScrollToTopFabProps> = ({
-  chatFabBottomOffset,
-  fabSize,
-  fabSpacing,
+  bottomOffset,
+  _fabSize, // Destructured with underscore
+  _fabSpacing, // Destructured with underscore
   headerHeight,
   isMobile,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   // Calculate dynamic bottom position for this FAB
-  // It should be above the Chatbot FAB
   const dynamicBottom = isMobile
-    ? `${chatFabBottomOffset + headerHeight + 16}px` // Adjusted for mobile header
-    : `${chatFabBottomOffset}px`; // Standard offset for desktop
+    ? `${bottomOffset + headerHeight + 16}px` // Adjusted for mobile header
+    : `${bottomOffset}px`; // Standard offset for desktop
 
   // Effect to check scroll position and toggle visibility
   useEffect(() => {

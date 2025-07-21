@@ -1,7 +1,6 @@
 // src/layouts/DefaultLayout.tsx
-import React, { useRef } from 'react';
+import React from 'react';
 import Header from '../components/header/Header'; // The navigation pill
-// Removed: import TopNav from '../components/layout-parts/TopNav';
 import ScrollToTopFab from '../components/common/ScrollToTopFab';
 import ChatbotFab from '../components/common/ChatbotFab';
 import Footer from '../components/layout-parts/Footer';
@@ -11,24 +10,20 @@ import Link from 'next/link'; // For the "Get in Touch" button
 
 interface DefaultLayoutProps {
   children: React.ReactNode;
-  // Removed: topNavRef: React.RefObject<HTMLDivElement>;
   headerRef: React.RefObject<HTMLDivElement>;
-  // Removed: topNavHeight: number;
   headerHeight: number; // This will now be the height of the entire header container
   dynamicPaddingBottom: string;
   activePage: string;
   setActivePage: (page: string) => void;
   isMobile: boolean;
   chatbotFabBottomBaseOffset: number;
-  fabSize: number;
-  fabSpacing: number;
+  fabSize: number; // Size of a single FAB
+  fabSpacing: number; // Spacing between FABs
 }
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({
   children,
-  // Removed: topNavRef,
   headerRef,
-  // Removed: topNavHeight,
   headerHeight, // This prop now represents the height of the ENTIRE header bar
   dynamicPaddingBottom,
   activePage,
@@ -44,17 +39,14 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({
   // Calculate main content padding top based only on the main Header height
   const mainContentPaddingTop = `${headerHeight + (isMobile ? 20 : 40)}px`; // Adjust spacing as needed
 
-  // Calculate specific bottom offsets for each FAB
-  const chatbotFabActualBottomOffset = chatbotFabBottomBaseOffset; // e.g., 16px from bottom
-  const scrollToTopFabActualBottomOffset = chatbotFabActualBottomOffset + fabSize + fabSpacing;
+  // ScrollToTopFab will be the lowest one, closest to the bottom edge
+  const scrollToTopFabActualBottomOffset = chatbotFabBottomBaseOffset; // e.g., 16px from bottom
+  // ChatbotFab will be stacked directly above the ScrollToTopFab
+  const chatbotFabActualBottomOffset = scrollToTopFabActualBottomOffset + fabSize + fabSpacing;
+
 
   return (
     <div className="flex flex-col min-h-screen relative overflow-hidden bg-gray-950 font-inter">
-      {/* Removed Top Navigation Bar */}
-      {/* <div ref={topNavRef} className="fixed top-0 left-0 w-full z-40">
-        <TopNav />
-      </div> */}
-
       {/* --- Overall Header Container (Logo + Pill + Button) --- */}
       <motion.div
         ref={headerRef} // Attach ref to this overall container
@@ -120,9 +112,9 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({
         isMobile={isMobile}
       />
       <ScrollToTopFab
-        chatFabBottomOffset={scrollToTopFabActualBottomOffset}
-        fabSize={fabSize}
-        fabSpacing={fabSpacing}
+        bottomOffset={scrollToTopFabActualBottomOffset}
+        _fabSize={fabSize} // CRITICAL FIX: Changed to _fabSize
+        _fabSpacing={fabSpacing} // CRITICAL FIX: Changed to _fabSpacing
         headerHeight={navPillHeight} // Pass the fixed nav pill height
         isMobile={isMobile}
       />
