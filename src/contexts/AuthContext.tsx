@@ -1,16 +1,15 @@
 // src/contexts/AuthContext.tsx
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'; // Removed useCallback
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
+// Removed: import { useRouter } from 'next/router'; // useRouter is no longer directly used here
 
 // Define the shape of the user object within our application context
-// This should align with the extended NextAuth.js User/Session types
 interface AppUser {
   id?: string;
   name?: string | null;
   email?: string | null;
   image?: string | null;
-  role: 'admin' | 'client' | 'guest' | string; // CRITICAL: Define role property
+  role: 'admin' | 'client' | 'guest' | string;
   isAdmin: boolean;
   isClient: boolean;
 }
@@ -22,7 +21,6 @@ interface AuthContextType {
   status: 'loading' | 'authenticated' | 'unauthenticated';
   isAdmin: boolean;
   isClient: boolean;
-  // Add any other auth-related functions or data here
 }
 
 // Create the context with a default null value
@@ -35,18 +33,16 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const { data: session, status } = useSession();
   const [user, setUser] = useState<AppUser | null>(null);
-  const router = useRouter();
+  // Removed: const router = useRouter(); // router is no longer used here
 
   useEffect(() => {
     if (status === 'authenticated' && session?.user) {
-      // Map NextAuth.js session user to our AppUser type
       const appUser: AppUser = {
         id: session.user.id,
         name: session.user.name,
         email: session.user.email,
         image: session.user.image,
-        // Ensure role is explicitly set, defaulting to 'guest' if not provided by session
-        role: (session.user.role || 'guest') as AppUser['role'], // Cast to ensure type safety
+        role: (session.user.role || 'guest') as AppUser['role'],
         isAdmin: session.user.isAdmin || false,
         isClient: session.user.isClient || false,
       };
@@ -56,7 +52,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [session, status]);
 
-  // Derive boolean flags for roles
   const isAuthenticated = status === 'authenticated';
   const isAdmin = user?.isAdmin || false;
   const isClient = user?.isClient || false;
