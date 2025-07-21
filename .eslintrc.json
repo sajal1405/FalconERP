@@ -1,0 +1,34 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript"
+  ],
+  "rules": {
+    // Enforces `rel="noopener noreferrer"` for `target="_blank"` for security.
+    "react/jsx-no-target-blank": "error",
+    
+    // Configures the TypeScript ESLint rule for unused variables.
+    // It's set to "error" to flag unused variables as errors.
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        // Ignores arguments that start with an underscore (e.g., `_Component`, `_pageProps`).
+        "argsIgnorePattern": "^_", 
+        // Ignores local variables that start with an underscore.
+        "varsIgnorePattern": "^_",
+        // Ignores caught error variables that start with an underscore.
+        "caughtErrorsIgnorePattern": "^_" 
+      }
+    ],
+
+    // Prevents the use of unescaped HTML entity characters in JSX text,
+    // ensuring proper rendering and preventing potential injection issues.
+    "react/no-unescaped-entities": "error",
+
+    // --- CRITICAL FIX: Disables the rule that flags empty interface declarations. ---
+    // This is necessary for extending NextAuth.js types in `next-auth.d.ts`
+    // where interfaces might appear empty after merging with other types.
+    // This explicitly tells ESLint to ignore this specific warning.
+    "@typescript-eslint/no-empty-interface": "off"
+  }
+}

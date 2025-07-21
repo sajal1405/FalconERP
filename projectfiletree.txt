@@ -1,0 +1,276 @@
+D:\FALCONERP\
+├── .next\                         # Next.js build output (automatically generated, ignore by Git)
+├── node_modules\                  # Project dependencies (installed via npm/yarn/pnpm)
+├── public\                        # Static assets served directly (images, fonts, robots.txt, favicon.ico)
+│   ├── images\
+│   │   ├── falcon-erp-logo.svg    # Main company logo
+│   │   ├── hero-background.jpg    # Homepage background image
+│   │   ├── module-icons\          # Icons for ERP functional modules (outlined/stroked SVGs preferred)
+│   │   │   ├── finance-icon.svg
+│   │   │   ├── inventory-icon.svg
+│   │   │   ├── purchase-icon.svg
+│   │   │   ├── sales-icon.svg
+│   │   │   ├── cheques-icon.svg
+│   │   │   ├── intercompany-icon.svg
+│   │   │   ├── multi-currency-icon.svg
+│   │   │   ├── lc-tr-icon.svg
+│   │   │   ├── manufacturing-lite-icon.svg
+│   │   │   ├── prepaid-expense-icon.svg
+│   │   │   ├── business-intelligence-icon.svg
+│   │   │   ├── sales-analysis-icon.svg
+│   │   │   └── ... (other module icons)
+│   │   ├── industry-icons\        # Icons for industries served (outlined/stroked SVGs preferred)
+│   │   │   ├── trading-icon.svg
+│   │   │   ├── manufacturing-icon.svg
+│   │   │   ├── construction-icon.svg
+│   │   │   ├── automotive-icon.svg
+│   │   │   ├── consultancy-icon.svg
+│   │   │   └── ... (other industry icons)
+│   │   ├── resource-covers\       # Placeholder images/covers for resources
+│   │   │   ├── brochure-cover.jpg
+│   │   │   ├── article-cover.jpg
+│   │   │   └── ...
+│   │   └── avatars\               # Default user avatars
+│   ├── fonts\
+│   │   ├── Inter-Regular.ttf      # Ensure this font file exists if used locally
+│   │   └── Inter-Bold.ttf
+│   ├── robots.txt                 # SEO configuration for search engines
+│   ├── sitemap.xml                # XML sitemap (can be dynamically generated)
+│   └── favicon.ico                # Website favicon
+├── src\                           # All application source code
+│   ├── components\                # Reusable UI components across all applications/subdomains
+│   │   ├── ui\                    # shadcn/ui components (e.g., Button, Input, Dialog, Table, Form, Card, Accordion, Alert, Badge, Calendar, Checkbox, ComboBox, DatePicker, DropdownMenu, etc.)
+│   │   │   ├── button.tsx         # Using .tsx for TypeScript support in React components
+│   │   │   ├── input.tsx
+│   │   │   ├── dialog.tsx
+│   │   │   ├── table.tsx
+│   │   │   ├── form.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── accordion.tsx
+│   │   │   ├── alert.tsx
+│   │   │   ├── badge.tsx
+│   │   │   ├── calendar.tsx
+│   │   │   ├── checkbox.tsx
+│   │   │   ├── combobox.tsx
+│   │   │   ├── date-picker.tsx
+│   │   │   ├── dropdown-menu.tsx
+│   │   │   └── ... (many more shadcn components as needed)
+│   │   ├── layout-parts\          # Common layout sections (e.g., footer, SEO head)
+│   │   │   ├── Footer.tsx
+│   │   │   └── SeoHead.tsx        # Component for managing <head> elements (meta tags, title, canonical URLs)
+│   │   ├── header\                # Pill header components (from previous immersives)
+│   │   │   ├── Header.tsx
+│   │   │   └── NavItem.tsx
+│   │   ├── preloader\             # Preloader component (from previous immersive)
+│   │   │   └── Preloader.tsx
+│   │   ├── dashboards\            # Generic dashboard widgets and layout wrappers
+│   │   │   ├── WidgetContainer.tsx # Wrapper for individual dashboard widgets, handles loading/error states
+│   │   │   ├── ChartWidget.tsx    # Component for displaying Recharts/Nivo charts with data loading
+│   │   │   ├── StatCard.tsx       # Card for displaying key statistics with icon and value
+│   │   │   └── RecentActivityFeed.tsx # Component for recent activity stream
+│   │   ├── common\                # Other general-purpose components
+│   │   │   ├── Modal.tsx          # Reusable modal dialog
+│   │   │   ├── NotificationToast.tsx # Toast notifications (e.g., success, error messages)
+│   │   │   ├── LoadingSpinner.tsx # Generic loading spinner
+│   │   │   ├── PageTransition.tsx # Wrapper for page entry/exit animations using Framer Motion
+│   │   │   ├── Icon.tsx           # Wrapper component for Lucide Icons with custom styling
+│   │   │   ├── Breadcrumbs.tsx    # Navigation breadcrumbs
+│   │   │   ├── EmptyState.tsx     # Component for displaying when data is empty
+│   │   │   └── ErrorBoundary.tsx  # React Error Boundary for gracefully handling component errors
+│   │   └── animations\            # Specialized animation components/utilities
+│   │       ├── ScrollReveal.tsx   # Component for scroll-triggered animations (e.g., elements fading in as they scroll)
+│   │       ├── GlowEffect.tsx     # Component for adding dynamic glow effects to children
+│   │       ├── TileHoverEffect.tsx # Component for interactive tile-based hover effects (e.g., for modules/industries)
+│   │       ├── ParallaxEffect.tsx # For subtle parallax scrolling backgrounds
+│   │       └── ConfettiAnimation.tsx # For success feedback or celebratory moments
+│   ├── layouts\                   # Layout components for different sections/subdomains
+│   │   ├── DefaultLayout.tsx      # Layout for main public website pages (header, footer, main content slot)
+│   │   ├── AdminLayout.tsx        # Layout for admin portal (with dedicated sidebar, header, user info)
+│   │   ├── ClientLayout.tsx       # Layout for client portal (with client-specific navigation, dashboard structure)
+│   │   ├── AuthLayout.tsx         # Minimal layout for login/registration pages
+│   │   └── LinktreeLayout.tsx     # Minimal layout for linktree page
+│   ├── pages\                     # Next.js page components (handled by filesystem routing)
+│   │   ├── _app.tsx               # Custom App component (global styles, context providers, layout switching based on subdomain/path, authentication checks)
+│   │   ├── _document.tsx          # Custom Document component (for server-side HTML structure, e.g., custom fonts, CDN scripts)
+│   │   ├── api\                   # Next.js API Routes (backend logic for all domains)
+│   │   │   ├── auth\
+│   │   │   │   └── [...nextauth].ts # NextAuth.js catch-all route for authentication endpoints
+│   │   │   ├── users\             # User management APIs (CRUD users, assign roles - SuperAdmin only)
+│   │   │   │   ├── index.ts       # GET all users, POST new user
+│   │   │   │   └── [id].ts        # GET/PUT/DELETE specific user
+│   │   │   ├── roles\             # Role & Permissions APIs (define roles, assign granular permissions - SuperAdmin only)
+│   │   │   │   ├── index.ts       # GET all roles, POST new role
+│   │   │   │   └── [roleId].ts    # GET/PUT/DELETE specific role
+│   │   │   ├── cms\               # API to proxy requests to the Headless CMS (Editor role access)
+│   │   │   │   ├── pages.ts       # CRUD operations for main website pages content
+│   │   │   │   ├── blog-posts.ts  # CRUD operations for blog posts
+│   │   │   │   ├── resources.ts   # CRUD operations for resources (brochures, articles)
+│   │   │   │   ├── faqs.ts        # CRUD operations for FAQ entries
+│   │   │   │   ├── modules.ts     # CRUD for ERP module descriptions (marketing content)
+│   │   │   │   └── industries.ts  # CRUD for industry solution descriptions (marketing content)
+│   │   │   ├── erp-modules\       # APIs for ERP functional module *data* (e.g., pulling financial reports for clients)
+│   │   │   │   ├── finance.ts     # GET financial summaries, POST ledger entries
+│   │   │   │   ├── inventory.ts   # GET stock levels, PUT inventory adjustments
+│   │   │   │   ├── purchase.ts
+│   │   │   │   ├── sales.ts
+│   │   │   │   └── ... (APIs for each ERP module data, protected by roles)
+│   │   │   ├── reports\           # APIs for generating various operational/business reports (Tech/Admin roles)
+│   │   │   │   ├── usage-stats.ts # Website usage statistics
+│   │   │   │   ├── error-logs-summary.ts # Summary of errors from Sentry/logging
+│   │   │   │   ├── module-performance.ts # ERP module specific performance reports
+│   │   │   │   └── financial-summary.ts # High-level financial reports
+│   │   │   ├── logs\              # APIs for accessing backend logs (Tech role only, potentially real-time via Socket.IO)
+│   │   │   │   └── system-logs.ts
+│   │   │   ├── client-support\    # APIs for client support tickets (Client to create, Admin/Tech to manage)
+│   │   │   │   ├── index.ts       # GET all tickets, POST new ticket
+│   │   │   │   └── [ticketId].ts  # GET/PUT/DELETE specific ticket
+│   │   │   ├── chat\              # AI chat API endpoint (proxies to Gemini, manages session)
+│   │   │   │   └── gemini.ts
+│   │   │   ├── dashboard\         # API to provide dynamic dashboard widget configurations based on user role
+│   │   │   │   └── widgets.ts
+│   │   │   ├── contact.ts         # API endpoint for handling contact form submissions
+│   │   │   └── health.ts          # Simple health check endpoint for monitoring
+│   │   ├── index.tsx              # Home Page (falconerp.com/)
+│   │   ├── about.tsx              # About Falcon ERP company
+│   │   ├── services.tsx           # Overview of services, linking to modules/industries
+│   │   ├── contact.tsx            # Contact Us page with form
+│   │   ├── faqs.tsx               # Frequently Asked Questions page
+│   │   ├── modules\               # Dynamic routes for ERP Functional Modules
+│   │   │   ├── index.tsx          # Modules landing page, lists all modules with overview
+│   │   │   └── [slug].tsx         # Individual module detail page (e.g., /modules/finance-accounting)
+│   │   ├── industries\            # Dynamic routes for Industries Served
+│   │   │   ├── index.tsx          # Industries landing page, lists all industries with overview
+│   │   │   └── [slug].tsx         # Individual industry solution page (e.g., /industries/manufacturing)
+│   │   ├── resources\             # Resources section (brochures, articles, whitepapers, case studies)
+│   │   │   ├── index.tsx          # Resources listing page
+│   │   │   └── [slug].tsx         # Individual resource detail page (e.g., /resources/erp-benefits-whitepaper)
+│   │   ├── blog\                  # Blog module
+│   │   │   ├── index.tsx          # Blog listing page with pagination
+│   │   │   ├── [slug].tsx         # Individual blog post page
+│   │   │   └── [category].tsx     # Optional: Blog category pages (e.g., /blog/erp-trends)
+│   │   ├── auth\                  # Shared authentication pages (login, register)
+│   │   │   ├── login.tsx
+│   │   │   └── register.tsx
+│   │   └── 404.tsx                # Custom 404 Not Found error page
+│   ├── domains\                   # Pages and components specific to each subdomain
+│   │   ├── admin\                 # Code for admin.falconerp.com (SuperAdmin, Admin, Editor, Tech roles)
+│   │   │   ├── pages\             # Next.js pages for the admin portal
+│   │   │   │   ├── index.tsx      # Admin Dashboard (dynamic widgets based on current user role)
+│   │   │   │   ├── users\         # User management UI (list, create, edit - SuperAdmin)
+│   │   │   │   │   ├── index.tsx
+│   │   │   │   │   └── [id].tsx
+│   │   │   │   ├── roles.tsx      # Role & Permissions configuration UI (SuperAdmin)
+│   │   │   │   ├── content\       # CMS Content editing UI (Editor role)
+│   │   │   │   │   ├── blog-posts.tsx
+│   │   │   │   │   ├── pages.tsx
+│   │   │   │   │   └── resources.tsx
+│   │   │   │   ├── system-monitoring.tsx # Live logs, error tracking, APM (Tech role only)
+│   │   │   │   ├── reports.tsx    # Access to various operational/business reports (Tech, Admin roles)
+│   │   │   │   └── settings.tsx   # Admin application general settings
+│   │   │   └── components\        # Admin-specific UI components
+│   │   │       ├── AdminSidebar.tsx
+│   │   │       ├── UserManagementTable.tsx
+│   │   │       ├── RolePermissionMatrix.tsx
+│   │   │       ├── BlogEditor.tsx # Rich text editor for blog posts
+│   │   │       ├── LiveLogViewer.tsx # Real-time log display
+│   │   │       ├── AnalyticsDashboard.tsx # Integrates Recharts/Nivo for admin analytics
+│   │   │       └── ...
+│   │   ├── client\                # Code for client.falconerp.com (Client role)
+│   │   │   ├── pages\             # Next.js pages for the client portal
+│   │   │   │   ├── index.tsx      # Client Dashboard (dynamic widgets based on client ERP module access)
+│   │   │   │   ├── support.tsx    # Support ticket system UI (create, view status)
+│   │   │   │   ├── chat.tsx       # AI Chat Module UI (with Socket.IO for real-time interaction)
+│   │   │   │   ├── profile.tsx    # Client profile settings and subscription details
+│   │   │   │   ├── erp-access\    # Client-specific ERP module access pages
+│   │   │   │   │   └── [moduleId].tsx # E.g., /client/erp-access/finance (read-only views)
+│   │   │   │   └── downloads.tsx  # Software downloads, documentation specific to client
+│   │   │   └── components\        # Client-specific UI components
+│   │   │       ├── ClientDashboardWidget.tsx
+│   │   │       ├── AIChatInterface.tsx
+│   │   │       ├── SupportTicketForm.tsx
+│   │   │       ├── ModuleOverviewCard.tsx
+│   │   │       └── ...
+│   │   ├── links\                 # Code for links.falconerp.com (Public facing)
+│   │   │   ├── pages\
+│   │   │   │   └── index.tsx      # Linktree-style page (static/dynamic content from CMS)
+│   │   │   └── components\
+│   │   │       └── LinkCard.tsx   # Reusable component for each link
+│   │   ├── fedrix\                # Code for fedrix.falconerp.com (Integration with FedrixVision UI)
+│   │   │   ├── pages\
+│   │   │   │   └── index.tsx      # Page integrating FedrixVision UI
+│   │   │   └── components\
+│   │   │       └── FedrixEmbed.tsx # Component to embed/interface with FedrixVision (e.g., iFrame, Web Component, SDK integration)
+│   │   └── middleware.ts          # Next.js Middleware for domain-specific routing/auth checks (e.g., redirect unauthenticated users from admin/client subdomains)
+│   ├── styles\                    # Global CSS and Tailwind configuration
+│   │   ├── globals.css            # Custom CSS for holographic effects, global resets, utility classes
+│   │   └── tailwind.config.ts     # Tailwind configuration (extend theme, add custom utilities/animations, purge config)
+│   ├── lib\                       # Utility functions, helpers, external service integrations
+│   │   ├── auth.ts                # NextAuth.js configuration and helpers (e.g., `getServerSession`, `authOptions`)
+│   │   ├── db.ts                  # Prisma client initialization and database connection setup
+│   │   ├── cms.ts                 # Headless CMS API client (e.g., Strapi SDK/client for content fetching)
+│   │   ├── gemini.ts              # Google Gemini API client setup and basic prompt engineering utilities
+│   │   ├── logger.ts              # Winston/Pino logger setup (configured for console, file, Sentry integration)
+│   │   ├── sentry.ts              # Sentry initialization for error tracking (frontend & backend error boundaries)
+│   │   ├── socket.ts              # Socket.IO server-side setup for real-time communication
+│   │   ├── validation\            # Zod schemas for input validation
+│   │   │   ├── auth-schemas.ts
+│   │   │   ├── user-schemas.ts
+│   │   │   ├── cms-schemas.ts
+│   │   │   └── ... (schemas for all API inputs)
+│   │   ├── permissions.ts         # Centralized permission definitions and checks (e.g., `hasPermission` helper function)
+│   │   └── utils.ts               # General utility functions (e.g., date formatting, data transformations, debouncing)
+│   ├── services\                  # Business logic services (abstracts DB/API interactions from pages/APIs)
+│   │   ├── authService.ts         # User authentication, session management, password hashing
+│   │   ├── userService.ts         # User CRUD operations, role assignment, profile management
+│   │   ├── rolePermissionService.ts # Role creation, permission assignment, permission checks
+│   │   ├── cmsService.ts          # Business logic for interacting with the headless CMS (e.g., fetch blog posts, save page content)
+│   │   ├── chatService.ts         # AI chat conversation flow, Gemini API integration, context management
+│   │   ├── erpDataService.ts      # Business logic for fetching/managing ERP module data (e.g., `getFinancialReport`, `updateInventory`)
+│   │   ├── industryService.ts     # Business logic for industry-specific content/data
+│   │   ├── resourceService.ts     # Business logic for resources content management
+│   │   ├── blogService.ts         # Business logic for blog posts management
+│   │   ├── reportService.ts       # Data aggregation and report generation logic
+│   │   └── logService.ts          # Interface for consuming/displaying system logs
+│   ├── types\                     # TypeScript type definitions for the entire application (essential for large projects)
+│   │   ├── index.d.ts             # Global types and interfaces
+│   │   ├── auth.d.ts              # Auth-related types (session, user profile)
+│   │   ├── user.d.ts              # User, Role, Permission types, UserProfile
+│   │   ├── erp.d.ts               # ERP module data types (e.g., `FinanceEntry`, `InventoryItem`)
+│   │   ├── cms.d.ts               # CMS content types (e.g., `PageContent`, `BlogPost`)
+│   │   ├── dashboard.d.ts         # Dashboard widget types, `WidgetConfig`
+│   │   ├── chat.d.ts              # Chat message types, `AIChatMessage`
+│   │   ├── api.d.ts               # Types for API request/response bodies
+│   │   └── next-auth.d.ts         # Custom types for NextAuth.js session/callbacks
+│   ├── contexts\                  # React Contexts for global state management
+│   │   ├── AuthContext.tsx        # Provides user authentication state, role, and permissions across the app
+│   │   └── UIContext.tsx          # Provides UI-related state (e.g., notification, modal state, global loading)
+│   └── hooks\                     # Custom React hooks (e.g., useAuth, usePermissions, useChat, data fetching hooks)
+│       ├── useAuth.ts             # Hook to access authentication state and user info
+│       ├── usePermissions.ts      # Hook to check user permissions
+│       ├── useChat.ts             # Hook for chat module functionality
+│       ├── useDebounce.ts         # Debounce hook for input fields
+│       ├── useLocalStorage.ts     # For simple client-side persistence (e.g., user preferences)
+│       └── useApi.ts              # Generic hook for API data fetching with loading/error states
+├── prisma\                        # Prisma schema and database migrations
+│   ├── schema.prisma              # Defines PostgreSQL database schema for users, roles, permissions, ERP data entities
+│   └── migrations\                # Stores database migration files (managed by Prisma Migrate)
+│       ├── 2023xxxxxx_init\
+│       │   └── migration.sql
+│       └── ...
+├── scripts\                       # Helper scripts for development, deployment, data seeding
+│   ├── seed-db.ts                 # TypeScript script to seed initial data (e.g., default roles, super admin user)
+│   ├── create-super-admin.ts      # Utility to create a super admin user programmatically
+│   ├── deploy-cms.ps1             # PowerShell script to deploy/update the headless CMS (if self-hosted)
+│   ├── generate-icons.js          # Script to process SVG icons (e.g., optimize, generate sprite)
+│   └── setup-env.ps1              # PowerShell script for initial environment variable setup
+├── .env.local                     # Environment variables for local development (Git ignored)
+├── .env.production                # Environment variables for production deployment (Git ignored, managed by Vercel)
+├── .eslintrc.json                 # ESLint configuration for code quality and linting rules
+├── .prettierrc                    # Prettier configuration for consistent code formatting
+├── .gitignore                     # Files/directories to be ignored by Git
+├── next.config.mjs                # Next.js configuration (critical for subdomain routing, rewrites, headers, etc.)
+├── package.json                   # Project metadata, scripts, and dependencies (React, Next.js, Tailwind, Framer Motion, Prisma, NextAuth.js, Zod, Recharts, Socket.IO client, Winston, Sentry, etc.)
+├── pnpm-lock.yaml                 # pnpm lock file (or yarn.lock / package-lock.json if using different package manager)
+├── README.md                      # Comprehensive project documentation (setup, development, deployment, architecture overview)
+└── tsconfig.json                  # TypeScript configuration file (important for type checking and Intellisense in VS Code)
+└── vercel.json                    # Vercel deployment configuration (defines routes for subdomains, rewrites, environment variables)
