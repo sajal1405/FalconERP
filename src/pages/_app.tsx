@@ -24,38 +24,30 @@ import DefaultLayout from '../layouts/DefaultLayout';
 import AdminLayout from '../layouts/AdminLayout';
 import ClientLayout from '../layouts/ClientLayout';
 
-// CRITICAL FIX: Changed import path from '../app/globals.css' to '../styles/globals.css'
-import '../styles/globals.css'; // Corrected path based on your file structure
+import '../styles/globals.css';
 
 // Main App component logic, wrapped by providers below
 function AppContent({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  // Consume AuthContext to get authentication status and user roles
   const { isAuthenticated, status, isAdmin, isClient } = useAuth();
-  const [isLoading, setIsLoading] = useState(true); // Global preloader state
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Refs for layout measurements (used by DefaultLayout)
-  // Removed: topNavRef
-  const headerRef = useRef<HTMLDivElement>(null); // This now refers to the *overall* header container
+  const headerRef = useRef<HTMLDivElement>(null); // Ref for the TOP header container
 
-  // States for dynamic layout measurements
   const [_viewportHeight, setViewportHeight] = useState(0);
-  // Removed: topNavHeight
-  const [headerHeight, setHeaderHeight] = useState(0); // This will be the height of the overall header container
+  const [headerHeight, setHeaderHeight] = useState(0); // This will be the height of the TOP header container
   const [isMobile, setIsMobile] = useState(false);
 
-  // Measure heights for responsive layout calculations
   const measureHeights = useCallback(() => {
     if (typeof window !== 'undefined') {
       setViewportHeight(window.innerHeight);
-      // Removed: setTopNavHeight(topNavRef.current?.offsetHeight || 32);
-      const currentHeaderContainerHeight = headerRef.current?.offsetHeight || 112; // Default to a reasonable height if not measured yet (e.g., 80px pill + 32px padding/margins)
+      // CRITICAL FIX: Measure the height of the *top* header container
+      const currentHeaderContainerHeight = headerRef.current?.offsetHeight || 80; // Default to a reasonable height for the top bar
       setIsMobile(window.innerWidth < 768);
       setHeaderHeight(currentHeaderContainerHeight);
     }
   }, []);
 
-  // Effect to attach/detach resize listener for layout measurements
   useEffect(() => {
     measureHeights();
     if (typeof window !== 'undefined') {
@@ -64,25 +56,19 @@ function AppContent({ Component, pageProps }: AppProps) {
     }
   }, [measureHeights]);
 
-  // Callback for preloader completion
   const handlePreloaderComplete = useCallback(() => {
     setIsLoading(false);
   }, []);
 
-  /**
-   * Determines the type of layout to apply based on the current route.
-   * This is a crucial part of the dynamic layout system.
-   */
   const getLayoutType = useCallback((pathname: string) => {
     if (pathname.startsWith('/auth')) return 'auth';
     if (pathname.startsWith('/admin')) return 'admin';
     if (pathname.startsWith('/client')) return 'client';
-    return 'default'; // Default public website layout for all other paths
+    return 'default';
   }, []);
 
   const currentLayoutType = getLayoutType(router.pathname);
 
-  // --- Authorization and Redirection Logic ---
   useEffect(() => {
     if (status === 'loading' || isLoading) return;
 
@@ -111,10 +97,8 @@ function AppContent({ Component, pageProps }: AppProps) {
   const fabSize = 60;
   const fabSpacing = 16;
   const chatbotFabBottomBaseOffset = fabSpacing;
-  const dynamicPaddingBottom = isMobile
-    ? `${headerHeight + chatbotFabBottomBaseOffset + fabSize + fabSpacing + fabSize + 20}px` // Header bottom + FABs + extra space
-    : '0px';
-
+  // dynamicPaddingBottom is now handled by DefaultLayout's internal padding calculation
+  const dynamicPaddingBottom = '0px'; // Set to 0px as DefaultLayout will manage it
 
   return (
     <>
@@ -149,10 +133,8 @@ function AppContent({ Component, pageProps }: AppProps) {
           )}
           {currentLayoutType === 'default' && (
             <DefaultLayout
-              // Removed: topNavRef={topNavRef}
-              headerRef={headerRef} // Pass the ref to the overall header container
-              // Removed: topNavHeight={topNavHeight}
-              headerHeight={headerHeight} // Pass the calculated height of the overall header container
+              headerRef={headerRef} // Pass the ref to the overall TOP header container
+              headerHeight={headerHeight} // Pass the calculated height of the TOP header container
               dynamicPaddingBottom={dynamicPaddingBottom}
               activePage={activePageForHeader}
               setActivePage={(page) => router.push(`/${page}`)}
