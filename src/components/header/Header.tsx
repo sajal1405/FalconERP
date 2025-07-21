@@ -1,6 +1,6 @@
 // src/components/header/Header.tsx
-import React from 'react'; // Removed useRef, useEffect, useState as they are not used directly here
-import { motion, useScroll, useSpring } from 'framer-motion'; // Removed AnimatePresence
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion'; // Removed useScroll, useSpring
 import Image from 'next/image';
 import Link from 'next/link';
 import NavItem from './NavItem';
@@ -9,8 +9,6 @@ import { Home, Info, Briefcase, HelpCircle, Mail } from 'lucide-react';
 interface HeaderProps {
   activePage: string;
   setActivePage: (page: string) => void;
-  // Removed isMobile, viewportHeight, headerHeight, dynamicPaddingBottom
-  // as this Header component is designed to be positioned by DefaultLayout
 }
 
 // Header Component - This now represents ONLY the central pill-shaped navigation
